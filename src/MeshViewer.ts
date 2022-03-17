@@ -1,16 +1,19 @@
 import * as THREE from 'three'
 import { GUI } from 'dat.gui'
 import { GraphicsApp } from './GraphicsApp'
+import { RobotPart } from './RobotPart';
 
 export class MeshViewer extends GraphicsApp
 { 
     // State variables
-    private mouseDrag : boolean;
+    private mouseDrag: boolean;
 
     // Camera parameters
-    private cameraOrbitX : number;
-    private cameraOrbitY : number;
-    private cameraDistance : number;
+    private cameraOrbitX: number;
+    private cameraOrbitY: number;
+    private cameraDistance: number;
+
+    private robotRoot: RobotPart;
 
     constructor()
     {
@@ -22,9 +25,11 @@ export class MeshViewer extends GraphicsApp
         this.cameraOrbitX = 0;
         this.cameraOrbitY = 0;
         this.cameraDistance = 0;
+
+        this.robotRoot = new RobotPart('root');
     }
 
-    createScene() : void
+    createScene(): void
     {
         // Setup camera
         this.cameraDistance = 1;
@@ -41,23 +46,29 @@ export class MeshViewer extends GraphicsApp
         directionalLight.position.set(0, 2, 1);
         this.scene.add(directionalLight)
 
-        // Create a visual representation of the axes
-        var axisHelper = new THREE.AxesHelper(2);
-        this.scene.add(axisHelper);
-
         // Create the GUI
         var gui = new GUI();
         var controls = gui.addFolder('Controls');
         controls.open();
+
+        // Create the scene hierarchy for the robot
+        this.robotRoot.createHierarchy();
+        
+        // Add the meshes to the robot scene hierarchy
+        this.robotRoot.createMeshes();
+
+        // Add the robot root transform to the scene
+        this.scene.add(this.robotRoot.transform);
     }
 
-    update(deltaTime : number) : void
+
+    update(deltaTime: number): void
     {
 
     }
 
     // Mouse event handlers for wizard functionality
-    onMouseDown(event: MouseEvent) : void 
+    onMouseDown(event: MouseEvent): void 
     {
         if((event.target! as Element).localName == "canvas")
         {
@@ -66,12 +77,12 @@ export class MeshViewer extends GraphicsApp
     }
 
     // Mouse event handlers for wizard functionality
-    onMouseUp(event: MouseEvent) : void
+    onMouseUp(event: MouseEvent): void
     {
         this.mouseDrag = false;
     }
     
-    onMouseMove(event: MouseEvent) : void
+    onMouseMove(event: MouseEvent): void
     {
         if(this.mouseDrag)
         {
@@ -96,13 +107,13 @@ export class MeshViewer extends GraphicsApp
         }
     }
 
-    onMouseWheel(event: WheelEvent) : void
+    onMouseWheel(event: WheelEvent): void
     {
         this.cameraDistance += event.deltaY / 1000;
         this.updateCameraOrbit();
     }
 
-    private updateCameraOrbit() : void
+    private updateCameraOrbit(): void
     {
         var rotationMatrix = new THREE.Matrix4().makeRotationY(-this.cameraOrbitY * Math.PI / 180);
         rotationMatrix.multiply(new THREE.Matrix4().makeRotationX(-this.cameraOrbitX * Math.PI / 180));
