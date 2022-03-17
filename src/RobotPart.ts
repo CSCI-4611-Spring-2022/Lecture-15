@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { MeshBasicMaterial, MeshLambertMaterial } from 'three';
 
 export class RobotPart extends THREE.Group
 {
@@ -13,7 +12,7 @@ export class RobotPart extends THREE.Group
         super();
 
         this.name = name;
-        this.defaultMaterial = new MeshLambertMaterial();
+        this.defaultMaterial = new THREE.MeshLambertMaterial();
         this.defaultMaterial.wireframe = false;
 
         // Create a visual representation of the axes
@@ -35,7 +34,7 @@ export class RobotPart extends THREE.Group
             mesh.translateY(0.025);
             this.add(mesh);
 
-            const sphereGeometry = new THREE.SphereGeometry(0.15, 16, 6, 0, Math.PI * 2, 0, Math.PI / 2);
+            const sphereGeometry = new THREE.SphereGeometry(0.1, 16, 6, 0, Math.PI * 2, 0, Math.PI / 2);
             const sphereMesh = new THREE.Mesh(sphereGeometry, this.defaultMaterial);
             sphereMesh.translateY(0.05);
             this.add(sphereMesh);
@@ -109,6 +108,25 @@ export class RobotPart extends THREE.Group
             }
         });
     }
+
+    setRotation(name: string, eulerAngles: THREE.Euler): void
+    {
+        if(this.name == name)
+        {
+            this.setRotationFromEuler(eulerAngles);
+        }
+        else
+        {
+            // Recursively call this function for each child robot part
+            this.children.forEach((child: THREE.Object3D)=>{
+                if(child instanceof RobotPart)
+                {
+                    child.setRotation(name, eulerAngles);
+                }
+            });
+        }
+    }
+
 
     setDebugMode(debugMode: boolean): void
     {
