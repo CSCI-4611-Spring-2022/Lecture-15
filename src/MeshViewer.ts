@@ -18,11 +18,11 @@ export class MeshViewer extends GraphicsApp
     private robotRoot: RobotPart;
 
     // GUI variables
-    // private upperYRotation: number;
-    // private upperZRotation: number;
-    // private middleZRotation: number;
-    // private lowerZRotation: number;
-    // private endEffectorZRotation: number;
+    private upperArmSwivel: number;
+    private upperArmBend: number;
+    private middleArmBend: number;
+    private lowerArmBend: number;
+    private endEffectorBend: number;
 
     constructor()
     {
@@ -38,11 +38,11 @@ export class MeshViewer extends GraphicsApp
 
         this.robotRoot = new RobotPart('root');
 
-        // this.upperYRotation = 0;
-        // this.upperZRotation = 0;
-        // this.middleZRotation = 0;
-        // this.lowerZRotation = 0;
-        // this.endEffectorZRotation = 0;
+        this.upperArmSwivel = 0;
+        this.upperArmBend = 0;
+        this.middleArmBend = 0;
+        this.lowerArmBend = 0;
+        this.endEffectorBend = 0;
     }
 
     createScene(): void
@@ -65,37 +65,37 @@ export class MeshViewer extends GraphicsApp
         // Create the GUI
         var gui = new GUI();
 
-        // var upperArmControls = gui.addFolder('Upper Arm Controls');
-        // upperArmControls.open();
+        var upperArmControls = gui.addFolder('Upper Arm Controls');
+        upperArmControls.open();
 
-        // var upperYController = upperArmControls.add(this, 'upperYRotation', -180, 180);
-        // upperYController.name('swivel');
-        // upperYController.onChange((value: number) => { this.updateUpperArm()});
+        var upperYController = upperArmControls.add(this, 'upperArmSwivel', -180, 180);
+        upperYController.name('swivel');
+        upperYController.onChange((value: number) => { this.updateUpperArm()});
 
-        // var upperZController = upperArmControls.add(this, 'upperZRotation', -45, 45);
-        // upperZController.name('bend');
-        // upperZController.onChange((value: number) => { this.updateUpperArm()});
+        var upperZController = upperArmControls.add(this, 'upperArmBend', -45, 45);
+        upperZController.name('bend');
+        upperZController.onChange((value: number) => { this.updateUpperArm()});
 
-        // var middleArmControls = gui.addFolder('Middle Arm Controls');
-        // middleArmControls.open();
+        var middleArmControls = gui.addFolder('Middle Arm Controls');
+        middleArmControls.open();
 
-        // var middleZController = middleArmControls.add(this, 'middleZRotation', -135, 135);
-        // middleZController.name('bend');
-        // middleZController.onChange((value: number) => { this.updateMiddleArm()});
+        var middleZController = middleArmControls.add(this, 'middleArmBend', -135, 135);
+        middleZController.name('bend');
+        middleZController.onChange((value: number) => { this.updateMiddleArm()});
 
-        // var lowerArmControls = gui.addFolder('Lower Arm Controls');
-        // lowerArmControls.open();
+        var lowerArmControls = gui.addFolder('Lower Arm Controls');
+        lowerArmControls.open();
 
-        // var lowerZController = lowerArmControls.add(this, 'lowerZRotation', -135, 135);
-        // lowerZController.name('bend');
-        // lowerZController.onChange((value: number) => { this.updateLowerArm()});
+        var lowerZController = lowerArmControls.add(this, 'lowerArmBend', -135, 135);
+        lowerZController.name('bend');
+        lowerZController.onChange((value: number) => { this.updateLowerArm()});
 
-        // var endEffectorControls = gui.addFolder('End Effector Controls');
-        // endEffectorControls.open();
+        var endEffectorControls = gui.addFolder('End Effector Controls');
+        endEffectorControls.open();
 
-        // var endEffectorZController = endEffectorControls.add(this, 'endEffectorZRotation', -90, 90);
-        // endEffectorZController.name('bend');
-        // endEffectorZController.onChange((value: number) => { this.updateEndEffector()});
+        var endEffectorZController = endEffectorControls.add(this, 'endEffectorBend', -90, 90);
+        endEffectorZController.name('bend');
+        endEffectorZController.onChange((value: number) => { this.updateEndEffector()});
 
         // Create a GUI control for the debug mode and add a change event handler
         var debugControls = gui.addFolder('Debugging');
@@ -123,22 +123,38 @@ export class MeshViewer extends GraphicsApp
 
     private updateUpperArm(): void
     {
-        // TO DO
+        this.robotRoot.setRotation('upperArm', new THREE.Euler(
+            0,
+            this.upperArmSwivel * Math.PI / 180, 
+            this.upperArmBend * Math.PI / 180
+        ));
     }
 
     private updateMiddleArm(): void
     {
-        // TO DO
+        this.robotRoot.setRotation('middleArm', new THREE.Euler(
+            0,
+            0, 
+            this.middleArmBend * Math.PI / 180
+        ));
     }
 
     private updateLowerArm(): void
     {
-        // TO DO
+        this.robotRoot.setRotation('lowerArm', new THREE.Euler(
+            0, 
+            0, 
+            this.lowerArmBend * Math.PI / 180 
+        ));
     }
 
     private updateEndEffector(): void
     {
-        // TO DO
+        this.robotRoot.setRotation('endEffector', new THREE.Euler(
+            0, 
+            0, 
+            this.endEffectorBend * Math.PI / 180 
+        ));
     }
 
     private toggleDebugMode(debugMode: boolean): void

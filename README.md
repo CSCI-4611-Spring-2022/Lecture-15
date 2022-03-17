@@ -1,6 +1,6 @@
 # Lecture 15: Programming with Hierarchical Transformations
 
-Detailed explanation of this code can be found in the lecture video.
+Detailed explanation of this code can be found in the [lecture video](https://mediaspace.umn.edu/media/t/1_gcbd3dxs).
 
 You can run the program on [GitHub pages](https://csci-4611-spring-2022.github.io/Lecture-15).
 
