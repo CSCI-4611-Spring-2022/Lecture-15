@@ -7,6 +7,7 @@ export class MeshViewer extends GraphicsApp
 { 
     // State variables
     private mouseDrag: boolean;
+    private debugMode : boolean;
 
     // Camera parameters
     private cameraOrbitX: number;
@@ -21,6 +22,7 @@ export class MeshViewer extends GraphicsApp
         super(60, 1920/1080, 0.1, 10);
 
         this.mouseDrag = false;
+        this.debugMode = false;
 
         this.cameraOrbitX = 0;
         this.cameraOrbitY = 0;
@@ -32,7 +34,7 @@ export class MeshViewer extends GraphicsApp
     createScene(): void
     {
         // Setup camera
-        this.cameraDistance = 1;
+        this.cameraDistance = 1.5;
         this.camera.position.set(0, 0, this.cameraDistance);
         this.camera.lookAt(0, 0, 0);
         this.camera.up.set(0, 1, 0);
@@ -51,20 +53,29 @@ export class MeshViewer extends GraphicsApp
         var controls = gui.addFolder('Controls');
         controls.open();
 
-        // Create the scene hierarchy for the robot
-        this.robotRoot.createHierarchy();
-        
-        // Add the meshes to the robot scene hierarchy
+        // Create a GUI control for the debug mode and add a change event handler
+        var debugController = controls.add(this, 'debugMode');
+        debugController.name('Debug Mode');
+        debugController.onChange((value: boolean) => { this.toggleDebugMode(value) });
+
+        // Create all the meshes for the robot hierarchy
         this.robotRoot.createMeshes();
 
+        this.robotRoot.translateY(-0.5);
+
         // Add the robot root transform to the scene
-        this.scene.add(this.robotRoot.transform);
+        this.scene.add(this.robotRoot);
     }
 
 
     update(deltaTime: number): void
     {
 
+    }
+
+    private toggleDebugMode(debugMode: boolean) : void
+    {
+        this.robotRoot.setDebugMode(debugMode);
     }
 
     // Mouse event handlers for wizard functionality
